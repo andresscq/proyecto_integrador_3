@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Materiales reciclados</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <header class="header">
+      <h1>♻️ Materiales reciclados</h1>
+      <h2>Bienvenido, <span id="username"></span> 👋</h2>
+
+      <button onclick="logout()">Cerrar sesión</button>
+    </header>
+
+    <main class="main">
+      <!-- Publicar -->
+      <section class="publish">
+        <h2>Publicar material</h2>
+
+        <form id="materialForm">
+          <input
+            type="text"
+            id="title"
+            placeholder="Nombre del material"
+            required
+          />
+
+          <input type="text" id="category" placeholder="Categoría" required />
+
+          <input type="text" id="location" placeholder="Ubicación" required />
+
+          <!-- 👇 ESTE ES EL QUE FALTABA -->
+          <input
+            type="text"
+            id="phone"
+            placeholder="Número de contacto"
+            required
+          />
+
+          <textarea
+            id="description"
+            placeholder="Descripción del material"
+          ></textarea>
+
+          <button type="submit">Publicar material</button>
+        </form>
+      </section>
+
+      <!-- Materiales -->
+      <section class="materials">
+        <h2>Materiales disponibles</h2>
+
+        <input type="text" id="search" placeholder="Buscar material" />
+        <button onclick="searchMaterials()">Buscar</button>
+
+        <div id="materialsList" class="cards"></div>
+      </section>
+    </main>
+
+    <script src="js/index.js"></script>
+  </body>
+</html>

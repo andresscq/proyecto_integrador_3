@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Crear Post | ReConstruye</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      padding-top: 70px;
+      background: #f4f6f8;
+    }
+
+    .form-box {
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 8px 20px rgba(0,0,0,.1);
+    }
+  </style>
+</head>
+
+<body onload="requireAuth()">
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">ReConstruye</a>
+
+    <div class="ms-auto">
+      <a href="dashboard.html" class="btn btn-outline-light me-2">Dashboard</a>
+      <a href="materials.html" class="btn btn-outline-light me-2">Materiales</a>
+      <a href="profile.html" class="btn btn-outline-light me-2">Perfil</a>
+      <button onclick="logout()" class="btn btn-danger">Salir</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container mt-4">
+  <h2 class="fw-bold mb-4">Publicar material</h2>
+
+  <div class="form-box">
+    <form id="postForm">
+
+      <input class="form-control mb-3" id="title" placeholder="Título del material" required>
+
+      <select class="form-control mb-3" id="type" required>
+        <option value="">Selecciona un tipo</option>
+
+        <!-- Cementos -->
+        <option>Cemento</option>
+        <option>Cemento Portland</option>
+        <option>Cemento Blanco</option>
+
+        <!-- Maderas -->
+        <option>Madera</option>
+        <option>Madera reciclada</option>
+        <option>Triplay</option>
+        <option>Tablones</option>
+
+        <!-- Metales -->
+        <option>Metal</option>
+        <option>Acero</option>
+        <option>Aluminio</option>
+        <option>Hierro</option>
+        <option>Cobre</option>
+
+        <!-- Otros -->
+        <option>Ladrillo</option>
+        <option>Bloques</option>
+        <option>Vidrio</option>
+        <option>Plástico</option>
+        <option>Yeso</option>
+        <option>Hormigón</option>
+        <option>Tejas</option>
+        <option>Tuberías</option>
+        <option>Puertas</option>
+        <option>Ventanas</option>
+      </select>
+
+      <input type="number" class="form-control mb-3" id="price" placeholder="Precio en USD" required>
+
+      <textarea
+        class="form-control mb-3"
+        id="description"
+        rows="4"
+        placeholder="Descripción del material"
+        required></textarea>
+
+      <input
+        class="form-control mb-3"
+        id="image"
+        placeholder="URL de la imagen (opcional)">
+
+      <button class="btn btn-success w-100">
+        Publicar material
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- Scripts -->
+<script src="js/auth.js"></script>
+<script src="js/createpost.js"></script>
+
+</body>
+</html>

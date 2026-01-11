@@ -1,64 +1,196 @@
 <!DOCTYPE html>
 <html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Materiales reciclados</title>
-    <link rel="stylesheet" href="css/styles.css" />
-  </head>
+<head>
+  <meta charset="UTF-8">
+  <title>ReConstruye</title>
 
-  <body>
-    <header class="header">
-      <h1>♻️ Materiales reciclados</h1>
-      <h2>Bienvenido, <span id="username"></span> 👋</h2>
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-      <button onclick="logout()">Cerrar sesión</button>
-    </header>
+  <!-- Estilos propios -->
+  <link rel="stylesheet" href="css/styles.css">
 
-    <main class="main">
-      <!-- Publicar -->
-      <section class="publish">
-        <h2>Publicar material</h2>
+  <style>
+    /* ===== HERO SLIDER ===== */
+    .hero {
+      position: relative;
+      height: 90vh;
+      overflow: hidden;
+      color: white;
+      display: flex;
+      align-items: center;
+    }
 
-        <form id="materialForm">
-          <input
-            type="text"
-            id="title"
-            placeholder="Nombre del material"
-            required
-          />
+    .hero-slide {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+      transform: translateX(100%);
+      transition: transform 1.2s ease-in-out;
+    }
 
-          <input type="text" id="category" placeholder="Categoría" required />
+    .hero-slide.active {
+      transform: translateX(0);
+      z-index: 1;
+    }
 
-          <input type="text" id="location" placeholder="Ubicación" required />
+    .hero-slide.prev {
+      transform: translateX(-100%);
+    }
 
-          <!-- 👇 ESTE ES EL QUE FALTABA -->
-          <input
-            type="text"
-            id="phone"
-            placeholder="Número de contacto"
-            required
-          />
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 2;
+    }
 
-          <textarea
-            id="description"
-            placeholder="Descripción del material"
-          ></textarea>
+    .hero-content {
+      position: relative;
+      z-index: 3;
+    }
+  </style>
+</head>
 
-          <button type="submit">Publicar material</button>
-        </form>
-      </section>
+<body>
 
-      <!-- Materiales -->
-      <section class="materials">
-        <h2>Materiales disponibles</h2>
+<!-- ================= NAVBAR ================= -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top shadow">
+  <div class="container">
+    <a class="navbar-brand fw-bold" href="index.html">ReConstruye</a>
 
-        <input type="text" id="search" placeholder="Buscar material" />
-        <button onclick="searchMaterials()">Buscar</button>
+    <div class="ms-auto d-flex align-items-center" id="nav-auth"></div>
+  </div>
+</nav>
 
-        <div id="materialsList" class="cards"></div>
-      </section>
-    </main>
+<!-- ================= HERO ================= -->
+<section class="hero">
 
-    <script src="js/index.js"></script>
-  </body>
+  <!-- Slides -->
+  <div class="hero-slide active" style="background-image:url('https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1920&q=80')"></div>
+  <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=1920&q=80')"></div>
+  <div class="hero-slide" style="background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1920&q=80')"></div>
+
+  <div class="hero-overlay"></div>
+
+  <div class="container hero-content text-center">
+    <h1 class="display-4 fw-bold">Construyendo un futuro sostenible</h1>
+
+    <p class="lead mt-4">
+      Compra y venta de materiales reciclables de construcción
+    </p>
+
+    <a href="login.html" class="btn btn-primary btn-lg mt-3" id="hero-btn">
+      Comenzar
+    </a>
+  </div>
+</section>
+
+<!-- ================= DESCRIPCIÓN ================= -->
+<section class="container py-5 text-center">
+  <p class="fs-5">
+    En ReConstruye, buscamos proporcionar una solución sencilla para la compra y venta
+    de materiales reciclables de construcción. Sabemos que el impacto ambiental es severo,
+    y por eso decidimos crear este proyecto.
+  </p>
+</section>
+
+<!-- ================= FEATURES ================= -->
+<section class="container py-5">
+  <div class="row text-center g-4">
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="fw-bold">Materiales reciclados</h5>
+          <p>Compra y venta segura de materiales reutilizables.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="fw-bold">Usuarios verificados</h5>
+          <p>Publicaciones creadas por usuarios registrados.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body">
+          <h5 class="fw-bold">Panel administrativo</h5>
+          <p>Moderación y control de publicaciones.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section class="bg-light py-5">
+  <div class="container text-center">
+    <h2 class="fw-bold mb-3">¿Listo para comenzar?</h2>
+    <p class="mb-4">
+      Regístrate o inicia sesión para acceder a los materiales disponibles.
+    </p>
+    <a href="register.html" class="btn btn-success btn-lg me-2">Registrarse</a>
+    <a href="login.html" class="btn btn-outline-dark btn-lg">Iniciar sesión</a>
+  </div>
+</section>
+
+<!-- ================= FOOTER ================= -->
+<footer class="bg-dark text-light text-center py-3">
+  © 2026 ReConstruye
+</footer>
+
+<!-- ================= SCRIPTS ================= -->
+<script src="js/darkmode.js"></script>
+
+<script>
+  /* ===== HERO SLIDER ===== */
+  const slides = document.querySelectorAll(".hero-slide");
+  let current = 0;
+
+  setInterval(() => {
+    slides[current].classList.remove("active");
+    slides[current].classList.add("prev");
+
+    current = (current + 1) % slides.length;
+
+    slides[current].classList.add("active");
+
+    slides.forEach((s, i) => {
+      if (i !== current) s.classList.remove("prev");
+    });
+  }, 6000);
+
+  /* ===== NAVBAR DINÁMICO ===== */
+  const navAuth = document.getElementById("nav-auth");
+  const user = JSON.parse(localStorage.getItem("loggedUser"));
+
+  if (user) {
+    navAuth.innerHTML = `
+      <a href="dashboard.html" class="btn btn-outline-light me-2">Dashboard</a>
+      <a href="profile.html" class="btn btn-outline-info me-2">Perfil</a>
+      <button class="btn btn-danger me-2" onclick="logout()">Salir</button>
+      <button onclick="toggleDark()" class="btn btn-secondary">Modo</button>
+    `;
+    document.getElementById("hero-btn").href = "materials.html";
+  } else {
+    navAuth.innerHTML = `
+      <a href="login.html" class="btn btn-outline-light me-2">Iniciar sesión</a>
+      <a href="register.html" class="btn btn-success me-2">Registrarse</a>
+      <button onclick="toggleDark()" class="btn btn-secondary">Modo</button>
+    `;
+  }
+
+  function logout() {
+    localStorage.removeItem("loggedUser");
+    window.location.href = "index.html";
+  }
+</script>
+
+</body>
 </html>

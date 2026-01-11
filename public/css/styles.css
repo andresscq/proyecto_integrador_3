@@ -1,184 +1,73 @@
-/* Reset y base */
 body {
-  margin: 0;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background: #f0f2f5;
-  color: #333;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-/* Header */
-.header {
-  background: #43a047;
-  color: white;
-  padding: 20px 30px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+/* ================= DARK MODE ================= */
+.dark-mode {
+  background-color: #121212;
+  color: #f1f1f1;
 }
 
-.header button {
-  background: white;
-  color: #43a047;
-  border: none;
-  padding: 10px 16px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+.dark-mode .card {
+  background-color: #1f1f1f;
+  color: #eaeaea;
 }
 
-.header button:hover {
-  background: #e8f5e9;
-  transform: translateY(-2px);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+.dark-mode .navbar {
+  background-color: #1a1a1a !important;
 }
 
-/* 🔥 Layout FINAL (vertical) */
-.main {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  padding: 30px;
-}
-
-/* Publicar */
-.publish {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(67, 160, 71, 0.2);
-  transition: all 0.3s ease;
-}
-
-.publish:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 20px rgba(67, 160, 71, 0.3);
-}
-
-.publish input,
-.publish textarea,
-.publish button {
-  width: 100%;
-  margin-bottom: 15px;
-  padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  font-size: 14px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.publish input:focus,
-.publish textarea:focus {
-  border-color: #43a047;
-  box-shadow: 0 0 5px rgba(67, 160, 71, 0.3);
-  outline: none;
-}
-
-.publish button {
-  background: #43a047;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s ease, transform 0.2s ease;
-}
-
-.publish button:hover {
-  background: #2e7d32;
-  transform: translateY(-2px);
-}
-
-/* Materiales */
-.materials {
-  background: white;
-  padding: 25px;
-  border-radius: 12px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-}
-
-/* 🔥 Cards ocupan todo el ancho */
-.cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-/* Card individual */
+/* ================= CARDS ================= */
 .card {
-  background: #e8f5e9;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 4px 15px rgba(67, 160, 71, 0.2);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 25px rgba(67, 160, 71, 0.35);
+  transform: scale(1.03);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-.card h3 {
-  margin: 0 0 10px 0;
-  color: #2e7d32;
-}
-
-.card p {
-  margin: 0;
-  font-size: 14px;
-  color: #555;
-}
-
-/* Buscador */
-.materials input[type="text"] {
-  width: calc(100% - 120px);
-  padding: 12px 15px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.materials input[type="text"]:focus {
-  outline: none;
-  border-color: #43a047;
-  box-shadow: 0 0 8px rgba(67, 160, 71, 0.4);
-}
-
-/* Botón buscar */
-.materials button {
-  padding: 12px 15px;
-  background: linear-gradient(135deg, #43a047, #2e7d32);
+/* ================= HERO ================= */
+.hero {
+  position: relative;
+  height: 90vh;
   color: white;
-  border: none;
-  border-radius: 10px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
-  box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
+  display: flex;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  /* 🔥 transición para el slider */
+  transition: background-image 1s ease-in-out;
 }
 
-.materials button:hover {
-  background: linear-gradient(135deg, #2e7d32, #43a047);
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(67, 160, 71, 0.45);
+/* Overlay oscuro */
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 1;
 }
 
-.whatsapp-btn {
-  margin-top: 10px;
-  width: 100%;
-  padding: 10px;
-  background: #25d366;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+/* Contenido por encima del overlay */
+.hero-content {
+  position: relative;
+  z-index: 2;
 }
 
-.whatsapp-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4);
+/* ================= ANIMACIONES ================= */
+.fade-in {
+  animation: fadeIn 1s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

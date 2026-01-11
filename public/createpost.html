@@ -10,11 +10,12 @@
   <style>
     body {
       padding-top: 70px;
-      background: #f4f6f8;
+      background: var(--bs-body-bg);
+      color: var(--bs-body-color);
     }
 
     .form-box {
-      background: white;
+      background: var(--bs-body-bg);
       padding: 2rem;
       border-radius: 10px;
       box-shadow: 0 8px 20px rgba(0,0,0,.1);
@@ -49,25 +50,21 @@
       <select class="form-control mb-3" id="type" required>
         <option value="">Selecciona un tipo</option>
 
-        <!-- Cementos -->
         <option>Cemento</option>
         <option>Cemento Portland</option>
         <option>Cemento Blanco</option>
 
-        <!-- Maderas -->
         <option>Madera</option>
         <option>Madera reciclada</option>
         <option>Triplay</option>
         <option>Tablones</option>
 
-        <!-- Metales -->
         <option>Metal</option>
         <option>Acero</option>
         <option>Aluminio</option>
         <option>Hierro</option>
         <option>Cobre</option>
 
-        <!-- Otros -->
         <option>Ladrillo</option>
         <option>Bloques</option>
         <option>Vidrio</option>
@@ -104,6 +101,7 @@
 <!-- Scripts -->
 <script src="js/auth.js"></script>
 <script src="js/createpost.js"></script>
+<script src="js/darkmode.js"></script>
 
 </body>
 </html>

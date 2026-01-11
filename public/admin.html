@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="light">
 <head>
   <meta charset="UTF-8">
   <title>Admin | ReConstruye</title>
@@ -10,7 +10,16 @@
   <style>
     body {
       padding-top: 70px;
-      background: #f4f6f8;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Fondo dinámico según tema */
+    [data-bs-theme="light"] body {
+      background-color: #f4f6f8;
+    }
+
+    [data-bs-theme="dark"] body {
+      background-color: #121212;
     }
 
     .stat-card {
@@ -43,10 +52,7 @@
 
     <div class="ms-auto">
       <a href="dashboard.html" class="btn btn-outline-light me-2">
-        Dashboard
-      </a>
-      <button onclick="toggleDark()" class="btn btn-secondary me-2">
-        Modo
+        Dashboard</a>
       </button>
       <button onclick="logout()" class="btn btn-danger">
         Salir
@@ -59,7 +65,7 @@
 
   <h2 class="fw-bold mb-4">Panel de administración</h2>
 
-  <!-- 📊 ESTADÍSTICAS -->
+  <!-- ESTADÍSTICAS -->
   <div class="row mb-4">
     <div class="col-md-3">
       <div class="card stat-card stat-total shadow-sm">
@@ -98,7 +104,7 @@
     </div>
   </div>
 
-  <!-- 📋 TABLA -->
+  <!-- TABLA -->
   <div class="table-responsive">
     <table class="table table-striped table-bordered align-middle">
       <thead class="table-dark">
@@ -128,7 +134,7 @@
     const total = posts.length;
     const approved = posts.filter(p => p.approved).length;
     const pending = total - approved;
-    const impact = approved * 25; // 🌱 dato demo
+    const impact = approved * 25;
 
     document.getElementById("statTotal").textContent = total;
     document.getElementById("statApproved").textContent = approved;
@@ -159,9 +165,10 @@
           <td>$${p.price}</td>
           <td>${p.user}</td>
           <td>
-            ${p.approved
-              ? `<span class="badge bg-success">Aprobada</span>`
-              : `<span class="badge bg-warning text-dark">Pendiente</span>`
+            ${
+              p.approved
+                ? `<span class="badge bg-success">Aprobada</span>`
+                : `<span class="badge bg-warning text-dark">Pendiente</span>`
             }
           </td>
           <td class="table-actions">

@@ -2,18 +2,18 @@ body {
   transition: background-color 0.3s, color 0.3s;
 }
 
-/* ================= DARK MODE ================= */
-.dark-mode {
+/* ================= DARK MODE (BOOTSTRAP 5.3) ================= */
+[data-bs-theme="dark"] body {
   background-color: #121212;
   color: #f1f1f1;
 }
 
-.dark-mode .card {
+[data-bs-theme="dark"] .card {
   background-color: #1f1f1f;
   color: #eaeaea;
 }
 
-.dark-mode .navbar {
+[data-bs-theme="dark"] .navbar {
   background-color: #1a1a1a !important;
 }
 
@@ -38,7 +38,6 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 
-  /* 🔥 transición para el slider */
   transition: background-image 1s ease-in-out;
 }
 

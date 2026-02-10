@@ -1,8 +1,8 @@
-require("dotenv").config(); // 👈 SIEMPRE primero
+import "dotenv/config"; // Carga automáticamente el archivo .env
+import connectDB from "./config/db.js"; // IMPORTANTE: Agregué el .js
+import app from "./App.js"; // IMPORTANTE: Agregué el .js
 
-const connectDB = require("./config/db");
-const app = require("./App");
-
+// Conectar a la base de datos
 connectDB();
 
 const PORT = process.env.PORT || 3000;

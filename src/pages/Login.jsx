@@ -2,97 +2,120 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
-  // 1. Definimos el estado para el formulario y errores
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [showError, setShowError] = useState(false);
+  const [error, setError] = useState("");
 
-  const navigate = useNavigate(); // Para redireccionar sin recargar
+  const navigate = useNavigate();
 
-  // ADMIN GLOBAL (Podrías mover esto a un archivo de constantes)
-  const ADMIN_EMAIL = "admin@reconstruye.com";
-  const ADMIN_PASSWORD = "admin123";
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setShowError(false);
+    setError("");
 
-    // Lógica del Admin
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+    try {
+      // 🚀 Conexión con tu Backend en el puerto 3000
+      const response = await fetch("http://localhost:3000/api/auth/Login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Credenciales incorrectas");
+      }
+
+      // 🛡️ DEFINIR ROL: Si es el correo del admin, le damos poder de admin
+      const isAdmin = email === "admin@reconstruye.com";
+      const userRole = isAdmin ? "admin" : "user";
+
+      // ✅ GUARDAR EN LOCALSTORAGE
+      // Guardamos el token y el email para que el resto de componentes sepan quién entró
       localStorage.setItem(
         "loggedUser",
         JSON.stringify({
-          id: 0,
-          name: "Administrador",
-          email: ADMIN_EMAIL,
-          role: "admin",
+          token: data.token,
+          id: data.id || data._id,
+          name: data.name,
+          email: email, // IMPORTANTE para validaciones de Admin
+          role: userRole,
         }),
       );
-      navigate("/Admin"); // Redirección estilo React
-      return;
+
+      // 🧭 REDIRECCIÓN SEGÚN ROL
+      if (isAdmin) {
+        console.log("Accediendo como Administrador...");
+        navigate("/Admin");
+      } else {
+        console.log("Accediendo como Usuario...");
+        navigate("/Dashboard");
+      }
+    } catch (err) {
+      setError(err.message);
     }
-
-    // Lógica de Usuario Normal
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find(
-      (u) => u.email === email && u.password === password,
-    );
-
-    if (!user) {
-      setShowError(true);
-      return;
-    }
-
-    localStorage.setItem(
-      "loggedUser",
-      JSON.stringify({
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role || "user",
-      }),
-    );
-
-    navigate("/Dashboard");
   };
 
   return (
-    <div className="login-container">
-      {" "}
-      {/* Los estilos irían en tu CSS */}
-      <div className="login-card">
+    <div
+      className="login-container d-flex align-items-center justify-content-center"
+      style={{ minHeight: "80vh" }}
+    >
+      <div
+        className="login-card p-4 shadow bg-white rounded"
+        style={{ maxWidth: "400px", width: "100%" }}
+      >
         <h2 className="text-center fw-bold mb-4">Iniciar Sesión</h2>
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            className="form-control mb-3"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
+          <div className="mb-3">
+            <label className="form-label">Correo Electrónico</label>
+            <input
+              type="email"
+              className="form-control"
+              placeholder="ejemplo@correo.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
 
-          <input
-            type="password"
-            className="form-control mb-3"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+          <div className="mb-3">
+            <label className="form-label">Contraseña</label>
+            <input
+              type="password"
+              className="form-control"
+              placeholder="********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+          </div>
 
-          {showError && (
-            <div className="text-danger mb-3">Credenciales incorrectas</div>
+          {error && (
+            <div
+              className="alert alert-danger p-2 text-center"
+              style={{ fontSize: "0.9rem" }}
+            >
+              {error}
+            </div>
           )}
 
-          <button type="submit" className="btn btn-primary w-100 mb-3">
-            Entrar
+          <button
+            type="submit"
+            className="btn btn-primary w-100 mb-3 fw-bold py-2"
+          >
+            Entrar al Sistema
           </button>
         </form>
 
-        <p className="text-center mb-0">
-          ¿No tienes cuenta? <Link to="/Register">Regístrate</Link>
+        <p className="text-center mb-0 mt-2">
+          ¿No tienes cuenta?{" "}
+          <Link to="/Register" className="text-decoration-none fw-bold">
+            Regístrate
+          </Link>
         </p>
       </div>
     </div>

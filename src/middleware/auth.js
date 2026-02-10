@@ -1,6 +1,6 @@
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
-module.exports = (req, res, next) => {
+const auth = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
@@ -11,9 +11,11 @@ module.exports = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.userId = decoded.id; // 👈 ID del usuario logueado
+    req.userId = decoded.id; // Guardamos el ID para usarlo en el controlador
     next();
   } catch (error) {
     res.status(401).json({ message: "Token inválido" });
   }
 };
+
+export default auth; // Cambiado de module.exports

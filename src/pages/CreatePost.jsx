@@ -3,9 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const CreatePost = () => {
   const navigate = useNavigate();
-  const user = JSON.parse(localStorage.getItem("loggedUser"));
+  const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
 
-  // Estado inicial del formulario
   const [formData, setFormData] = useState({
     title: "",
     type: "",
@@ -14,109 +13,178 @@ const CreatePost = () => {
     image: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const handleChange = (e) => {
     const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!user) {
-      alert("Debes iniciar sesión");
-      navigate("/login");
+    // 🛡️ Verificación de seguridad
+    if (!loggedUser || !loggedUser.token) {
+      alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+      navigate("/Login");
       return;
     }
 
-    const newPost = {
-      id: Date.now(),
+    setLoading(true);
+
+    // 📝 Estructura de datos para MongoDB
+    const materialData = {
       title: formData.title.trim(),
-      type: formData.type.trim(),
+      category: formData.type.trim(),
       price: Number(formData.price),
       description: formData.description.trim(),
       image: formData.image.trim() || "https://via.placeholder.com/300",
-      user: user.email,
-      approved: false, // Se envía para revisión como en tu JS original
+      location: "Quito, Ecuador",
+      // 🔒 IMPORTANTE: Forzamos que el material nazca desactivado
+      approved: false,
     };
 
-    const posts = JSON.parse(localStorage.getItem("posts")) || [];
-    posts.push(newPost);
-    localStorage.setItem("posts", JSON.stringify(posts));
+    try {
+      const response = await fetch("http://localhost:3000/api/materials", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${loggedUser.token}`,
+        },
+        body: JSON.stringify(materialData),
+      });
 
-    alert("Post enviado para revisión");
-    navigate("/dashboard");
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || "Error al publicar el material");
+      }
+
+      alert(
+        "¡Material enviado! Estará visible una vez que el administrador lo apruebe.",
+      );
+      navigate("/Dashboard");
+    } catch (error) {
+      alert("Error: " + error.message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
-    <div className="container mt-4">
-      <h2 className="fw-bold mb-4">Publicar material</h2>
+    <div className="container mt-4 pb-5">
+      <div className="d-flex justify-content-between align-items-center mb-4">
+        <h2 className="fw-bold text-success mb-0">Publicar Material</h2>
+        <span className="badge bg-warning text-dark p-2">
+          Sujeto a revisión
+        </span>
+      </div>
 
-      <div className="form-box shadow p-4 rounded bg-white">
+      <div className="form-box shadow-sm p-4 rounded bg-white border border-top-0">
+        <div className="alert alert-info border-0 small">
+          Nota: Tu publicación no aparecerá en el catálogo general hasta que un
+          administrador verifique los datos.
+        </div>
+
         <form onSubmit={handleSubmit}>
-          <input
-            className="form-control mb-3"
-            id="title"
-            placeholder="Título del material"
-            required
-            value={formData.title}
-            onChange={handleChange}
-          />
+          <div className="mb-3">
+            <label className="form-label fw-bold small text-uppercase">
+              Título del material
+            </label>
+            <input
+              className="form-control"
+              id="title"
+              placeholder="Ej: 50 Ladrillos de arcilla"
+              required
+              value={formData.title}
+              onChange={handleChange}
+            />
+          </div>
 
-          <select
-            className="form-control mb-3"
-            id="type"
-            required
-            value={formData.type}
-            onChange={handleChange}
+          <div className="mb-3">
+            <label className="form-label fw-bold small text-uppercase">
+              Categoría
+            </label>
+            <select
+              className="form-select"
+              id="type"
+              required
+              value={formData.type}
+              onChange={handleChange}
+            >
+              <option value="">Selecciona un tipo</option>
+              <optgroup label="Cemento">
+                <option>Cemento</option>
+                <option>Cemento Portland</option>
+                <option>Cemento Blanco</option>
+              </optgroup>
+              <optgroup label="Madera">
+                <option>Madera reciclada</option>
+                <option>Triplay</option>
+                <option>Tablones</option>
+              </optgroup>
+              <option>Metal</option>
+              <option>Ladrillo</option>
+              <option>Vidrio</option>
+            </select>
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label fw-bold small text-uppercase">
+              Precio estimado (USD)
+            </label>
+            <input
+              type="number"
+              className="form-control"
+              id="price"
+              placeholder="0.00"
+              required
+              value={formData.price}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="mb-3">
+            <label className="form-label fw-bold small text-uppercase">
+              Descripción detallada
+            </label>
+            <textarea
+              className="form-control"
+              id="description"
+              rows="3"
+              placeholder="Estado del material, dimensiones, cantidad exacta..."
+              required
+              value={formData.description}
+              onChange={handleChange}
+            ></textarea>
+          </div>
+
+          <div className="mb-4">
+            <label className="form-label fw-bold small text-uppercase">
+              URL de la Imagen (Link)
+            </label>
+            <input
+              className="form-control"
+              id="image"
+              placeholder="https://images.com/foto-material.jpg"
+              value={formData.image}
+              onChange={handleChange}
+            />
+          </div>
+
+          <button
+            type="submit"
+            className="btn btn-success btn-lg w-100 fw-bold shadow-sm"
+            disabled={loading}
           >
-            <option value="">Selecciona un tipo</option>
-            <optgroup label="Cemento">
-              <option>Cemento</option>
-              <option>Cemento Portland</option>
-              <option>Cemento Blanco</option>
-            </optgroup>
-            <optgroup label="Madera">
-              <option>Madera</option>
-              <option>Madera reciclada</option>
-              <option>Triplay</option>
-              <option>Tablones</option>
-            </optgroup>
-            {/* ... Agrega el resto de tus opciones aquí ... */}
-            <option>Metal</option>
-            <option>Ladrillo</option>
-            <option>Vidrio</option>
-          </select>
-
-          <input
-            type="number"
-            className="form-control mb-3"
-            id="price"
-            placeholder="Precio en USD"
-            required
-            value={formData.price}
-            onChange={handleChange}
-          />
-
-          <textarea
-            className="form-control mb-3"
-            id="description"
-            rows="4"
-            placeholder="Descripción del material"
-            required
-            value={formData.description}
-            onChange={handleChange}
-          ></textarea>
-
-          <input
-            className="form-control mb-3"
-            id="image"
-            placeholder="URL de la imagen (opcional)"
-            value={formData.image}
-            onChange={handleChange}
-          />
-
-          <button type="submit" className="btn btn-success w-100 fw-bold">
-            Publicar material
+            {loading ? (
+              <>
+                <span className="spinner-border spinner-border-sm me-2"></span>
+                Procesando...
+              </>
+            ) : (
+              "Enviar para Revisión"
+            )}
           </button>
         </form>
       </div>

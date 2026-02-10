@@ -1,0 +1,103 @@
+/* Variables de color personalizadas */
+:root {
+  --bs-body-bg: #f4f6f8;
+  --transition-speed: 0.3s;
+}
+
+/* Ajuste general por el Navbar fixed */
+body {
+  padding-top: 80px;
+  background-color: var(--bs-body-bg);
+  min-height: 100vh;
+  transition:
+    background-color var(--transition-speed),
+    color var(--transition-speed);
+}
+
+/* Estilos de las cajas y tarjetas que tenías en Dashboard y Profile */
+.section-box,
+.profile-card,
+.register-card,
+.login-card,
+.form-box {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+/* Efectos de hover para las tarjetas de materiales y stats */
+.stat-card,
+.material-card {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  border-radius: 10px;
+  border: none;
+}
+
+.stat-card:hover,
+.material-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* Bordes de colores para las estadísticas (de tu admin.html) */
+.stat-total {
+  border-left: 5px solid #0d6efd !important;
+}
+.stat-ok {
+  border-left: 5px solid #198754 !important;
+}
+.stat-pending {
+  border-left: 5px solid #ffc107 !important;
+}
+.stat-impact {
+  border-left: 5px solid #20c997 !important;
+}
+
+/* Soporte para Modo Oscuro (Bootstrap 5.3) */
+[data-bs-theme="dark"] {
+  --bs-body-bg: #121212;
+}
+
+[data-bs-theme="dark"] .section-box,
+[data-bs-theme="dark"] .profile-card,
+[data-bs-theme="dark"] .card {
+  background: #1e1e1e;
+  color: white;
+}
+.hero {
+  position: relative;
+  height: 90vh;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.2s ease-in-out;
+}
+
+.hero-slide.active {
+  opacity: 1;
+  z-index: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 2;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 3;
+}

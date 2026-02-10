@@ -1,7 +1,7 @@
 require("dotenv").config(); // 👈 SIEMPRE primero
 
 const connectDB = require("./config/db");
-const app = require("./app");
+const app = require("./App");
 
 connectDB();
 

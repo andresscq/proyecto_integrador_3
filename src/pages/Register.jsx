@@ -24,8 +24,8 @@ const Register = () => {
     setError("");
 
     try {
-      // 🚀 CONEXIÓN REAL CON TU BACKEND (Terminal 1)
-      const response = await fetch("http://localhost:3000/api/auth/Register", {
+      // 🚀 CONEXIÓN CON TU BACKEND (Asegúrate de que la ruta sea /register en minúsculas si así está en tu router)
+      const response = await fetch("http://localhost:3000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -39,7 +39,7 @@ const Register = () => {
         throw new Error(data.message || "Error al registrar");
       }
 
-      // Si el registro es exitoso en MongoDB
+      // ✅ Registro exitoso en PostgreSQL
       setSuccess(true);
       setTimeout(() => {
         navigate("/Login");
@@ -58,7 +58,7 @@ const Register = () => {
         className="register-card p-4 shadow bg-white rounded"
         style={{ maxWidth: "450px", width: "100%" }}
       >
-        <h2 className="text-center fw-bold mb-4">Registro Real</h2>
+        <h2 className="text-center fw-bold mb-4">Crear Cuenta</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="mb-3">
@@ -87,12 +87,12 @@ const Register = () => {
           </div>
 
           <div className="mb-3">
-            <label className="form-label">Teléfono</label>
+            <label className="form-label">Teléfono (WhatsApp)</label>
             <input
               id="phone"
               type="text"
               className="form-control"
-              placeholder="0987654321"
+              placeholder="Ej: 593987654321"
               required
               value={formData.phone}
               onChange={handleChange}
@@ -117,7 +117,7 @@ const Register = () => {
           )}
           {success && (
             <div className="alert alert-success p-2 text-center">
-              ¡Registrado en MongoDB! Redirigiendo...
+              ¡Registrado con éxito! Redirigiendo...
             </div>
           )}
 

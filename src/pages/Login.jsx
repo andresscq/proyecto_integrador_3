@@ -13,8 +13,8 @@ const Login = () => {
     setError("");
 
     try {
-      // 🚀 Conexión con tu Backend en el puerto 3000
-      const response = await fetch("http://localhost:3000/api/auth/Login", {
+      // 🚀 Conexión con PostgreSQL a través del Backend
+      const response = await fetch("http://localhost:3000/api/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -28,29 +28,28 @@ const Login = () => {
         throw new Error(data.message || "Credenciales incorrectas");
       }
 
-      // 🛡️ DEFINIR ROL: Si es el correo del admin, le damos poder de admin
+      // 🛡️ DEFINIR ROL (Mantenemos tu lógica de Admin)
       const isAdmin = email === "admin@reconstruye.com";
       const userRole = isAdmin ? "admin" : "user";
 
       // ✅ GUARDAR EN LOCALSTORAGE
-      // Guardamos el token y el email para que el resto de componentes sepan quién entró
+      // Ahora incluimos 'phone' porque Postgres lo devuelve y lo usaremos para WhatsApp
       localStorage.setItem(
         "loggedUser",
         JSON.stringify({
           token: data.token,
-          id: data.id || data._id,
+          id: data.id, // En Postgres siempre será 'id' (numérico)
           name: data.name,
-          email: email, // IMPORTANTE para validaciones de Admin
+          email: email,
+          phone: data.phone, // 👈 Importante para el catálogo
           role: userRole,
         }),
       );
 
-      // 🧭 REDIRECCIÓN SEGÚN ROL
+      // 🧭 REDIRECCIÓN
       if (isAdmin) {
-        console.log("Accediendo como Administrador...");
         navigate("/Admin");
       } else {
-        console.log("Accediendo como Usuario...");
         navigate("/Dashboard");
       }
     } catch (err) {

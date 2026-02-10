@@ -1,99 +1,113 @@
 import Material from "../models/Material.js";
+import { query } from "../config/postgres.js";
 
-// 📝 Crear material (Nace como pendiente)
+// 📝 Crear material (Híbrido: Datos en Mongo, ID de usuario de Postgres)
 export const createMaterial = async (req, res) => {
   try {
+    const { title, category, price, description, image, userName, userPhone } =
+      req.body;
+
     const material = await Material.create({
-      title: req.body.title,
-      category: req.body.category,
-      price: req.body.price,
-      description: req.body.description,
-      image: req.body.image, // 👈 Este debe recibir la URL del Frontend
-      user: req.userId,
+      title,
+      category,
+      price,
+      description,
+      image,
+      userName, // Datos desnormalizados para evitar consultas lentas a Postgres
+      userPhone,
+      user: req.userId, // ID numérico que viene del Token (Postgres)
       approved: false,
     });
+
     res.status(201).json(material);
   } catch (error) {
-    res.status(500).json({ message: "Error al crear" });
+    res.status(500).json({ message: "Error al crear material en MongoDB" });
   }
 };
 
-// 📥 Obtener todos los materiales
+// 📥 Obtener todos los materiales aprobados
 export const getMaterials = async (req, res) => {
   try {
     const { search } = req.query;
-    let filter = {};
+    let filter = { approved: true };
 
     if (search) {
-      filter = {
-        $or: [
-          { title: { $regex: search, $options: "i" } },
-          { category: { $regex: search, $options: "i" } },
-          { description: { $regex: search, $options: "i" } },
-        ],
-      };
+      filter.$or = [
+        { title: { $regex: search, $options: "i" } },
+        { category: { $regex: search, $options: "i" } },
+      ];
     }
 
-    const materials = await Material.find(filter)
-      .populate("user", "name phone email")
-      .sort({ createdAt: -1 });
-
+    const materials = await Material.find(filter).sort({ createdAt: -1 });
     res.json(materials);
   } catch (error) {
-    res.status(500).json({ message: "Error al obtener materiales" });
+    res.status(500).json({ message: "Error al obtener materiales de MongoDB" });
   }
 };
 
-// 🚀 APROBAR MATERIAL (La función que activa el botón)
+// 🔍 Obtener un solo material por ID (Esta es la que te daba el Error)
+export const getMaterialById = async (req, res) => {
+  try {
+    const material = await Material.findById(req.params.id);
+    if (!material) {
+      return res
+        .status(404)
+        .json({ message: "Material no encontrado en MongoDB" });
+    }
+    res.json(material);
+  } catch (error) {
+    res.status(500).json({ message: "ID de material no válido" });
+  }
+};
+
+// 🚀 APROBAR MATERIAL (Actualiza Mongo y REGISTRA en Postgres)
 export const updateMaterial = async (req, res) => {
   try {
     const { id } = req.params;
+    const { approved } = req.body;
 
-    // Usamos $set para asegurarnos de que solo cambie el campo enviado
+    // 1. Actualizar en MongoDB
     const updated = await Material.findByIdAndUpdate(
       id,
       { $set: req.body },
       { new: true },
     );
 
-    if (!updated)
-      return res.status(404).json({ message: "Material no encontrado" });
+    if (!updated) return res.status(404).json({ message: "No encontrado" });
+
+    // 2. AUDITORÍA: Si se aprueba, guardamos quién lo hizo en PostgreSQL
+    if (approved === true) {
+      await query(
+        "INSERT INTO admin_logs (admin_id, accion, material_id) VALUES ($1, $2, $3)",
+        [req.userId, "APROBACIÓN", id],
+      );
+    }
 
     res.json(updated);
   } catch (error) {
     res
       .status(500)
-      .json({ message: "Error al actualizar en la base de datos" });
+      .json({ message: "Error en la operación híbrida (Mongo/Postgres)" });
   }
 };
 
-// 🗑 ELIMINAR (Permite al dueño y al Admin)
+// 🗑 ELIMINAR (Registra la eliminación en Postgres)
 export const deleteMaterial = async (req, res) => {
   try {
     const { id } = req.params;
-    const material = await Material.findById(id);
+    const materialEliminado = await Material.findByIdAndDelete(id);
 
-    if (!material) return res.status(404).json({ message: "No encontrado" });
+    if (!materialEliminado)
+      return res.status(404).json({ message: "Material no existe" });
 
-    // Si el usuario es el Admin (puedes verificar por correo si lo tienes en req)
-    // O simplemente permites el delete si el token es válido (confiando en el panel admin)
-    await Material.findByIdAndDelete(id);
+    // Registro de seguridad en Postgres
+    await query(
+      "INSERT INTO admin_logs (admin_id, accion, material_id) VALUES ($1, $2, $3)",
+      [req.userId, "ELIMINACIÓN", id],
+    );
 
-    res.json({ message: "Material eliminado correctamente" });
+    res.json({ message: "Material eliminado y registrado en Postgres" });
   } catch (error) {
     res.status(500).json({ message: "Error al eliminar" });
-  }
-};
-
-export const getMaterialById = async (req, res) => {
-  try {
-    const material = await Material.findById(req.params.id).populate(
-      "user",
-      "name phone",
-    );
-    if (!material) return res.status(404).json({ message: "No encontrado" });
-    res.json(material);
-  } catch (error) {
-    res.status(500).json({ message: "Error al obtener material" });
   }
 };

@@ -14,11 +14,11 @@ const MaterialSchema = new mongoose.Schema(
       type: Number,
       required: true,
       default: 0,
-    }, // 👈 Faltaba este campo
+    },
     image: {
       type: String,
       default: "https://via.placeholder.com/300",
-    }, // 👈 Faltaba este campo para la URL de la imagen
+    },
     description: {
       type: String,
       required: true,
@@ -31,11 +31,20 @@ const MaterialSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // --- CAMBIOS PARA POSTGRES ---
     user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type: Number, // 👈 Ahora es Number porque el ID de Postgres es SERIAL (1, 2, 3...)
       required: true,
     },
+    userName: {
+      type: String, // 👈 Guardamos el nombre del vendedor aquí
+      required: true,
+    },
+    userPhone: {
+      type: String, // 👈 Guardamos el teléfono para WhatsApp aquí
+      required: true,
+    },
+    // ----------------------------
   },
   { timestamps: true },
 );

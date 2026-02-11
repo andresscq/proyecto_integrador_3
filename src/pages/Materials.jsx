@@ -165,14 +165,51 @@ const Materials = () => {
                   <p className="text-muted small mb-4" style={{ flexGrow: 1 }}>
                     {p.description?.substring(0, 100)}...
                   </p>
-                  <a
-                    href={`https://wa.me/${p.user?.phone?.replace(/\D/g, "") || "593999999999"}?text=${encodeURIComponent(`Hola ${p.user?.name || "Vendedor"}, me interesa tu material: ${p.title}`)}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn btn-outline-success w-100 fw-bold"
+                  <button
+                    className="btn btn-success w-100 fw-bold"
+                    onClick={() => {
+                      // 1. Ver en consola qué tiene el material (F12 para ver)
+                      console.log("Datos del material seleccionado:", p);
+
+                      // 2. Extraer el teléfono (asegurando que sea string)
+                      const rawPhone = p.userPhone
+                        ? String(p.userPhone).trim()
+                        : "";
+
+                      if (
+                        !rawPhone ||
+                        rawPhone === "" ||
+                        rawPhone === "undefined"
+                      ) {
+                        alert(
+                          "Error: Este material no tiene un número de teléfono válido en la base de datos.",
+                        );
+                        return;
+                      }
+
+                      // 3. Limpiar y formatear para WhatsApp
+                      let cleanPhone = rawPhone.replace(/\D/g, ""); // Quita todo lo que no sea número
+
+                      if (cleanPhone.startsWith("0")) {
+                        cleanPhone = cleanPhone.substring(1);
+                      }
+
+                      if (!cleanPhone.startsWith("593")) {
+                        cleanPhone = "593" + cleanPhone;
+                      }
+
+                      // 4. Construir URL y abrir
+                      const message = encodeURIComponent(
+                        `Hola ${p.userName || "Vendedor"}, me interesa tu material: ${p.title}`,
+                      );
+                      const whatsappUrl = `https://wa.me/${cleanPhone}?text=${message}`;
+
+                      console.log("URL Generada:", whatsappUrl);
+                      window.open(whatsappUrl, "_blank");
+                    }}
                   >
-                    Contactar Vendedor
-                  </a>
+                    Contactar por WhatsApp
+                  </button>
                 </div>
               </div>
             </div>

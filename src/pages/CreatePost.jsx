@@ -20,28 +20,51 @@ const CreatePost = () => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
+  // 🛠️ Función para asegurar que el teléfono sea válido para WhatsApp
+  const formatPhoneForWA = (phone) => {
+    if (!phone) return "";
+    let cleaned = phone.toString().replace(/\D/g, "");
+
+    if (cleaned.startsWith("0")) {
+      cleaned = cleaned.substring(1);
+    }
+
+    if (!cleaned.startsWith("593")) {
+      cleaned = "593" + cleaned;
+    }
+
+    return cleaned;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // 🛡️ Verificación de seguridad
     if (!loggedUser || !loggedUser.token) {
       alert("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
       navigate("/Login");
       return;
     }
 
+    // 🚨 VALIDACIÓN CRÍTICA: Si el usuario no tiene teléfono en el localStorage
+    if (!loggedUser.telefono) {
+      alert(
+        "Error: No tienes un número de teléfono registrado. Por favor, actualiza tu perfil o regístrate de nuevo.",
+      );
+      return;
+    }
+
     setLoading(true);
 
-    // 📝 Estructura de datos para MongoDB
     const materialData = {
       title: formData.title.trim(),
       category: formData.type.trim(),
       price: Number(formData.price),
       description: formData.description.trim(),
       image: formData.image.trim() || "https://via.placeholder.com/300",
-      location: "Quito, Ecuador",
-      // 🔒 IMPORTANTE: Forzamos que el material nazca desactivado
       approved: false,
+      userName: loggedUser.nombre,
+      // ✅ CORRECCIÓN AQUÍ: Usamos la función formatPhoneForWA
+      userPhone: formatPhoneForWA(loggedUser.telefono),
     };
 
     try {
@@ -54,14 +77,13 @@ const CreatePost = () => {
         body: JSON.stringify(materialData),
       });
 
-      const data = await response.json();
-
       if (!response.ok) {
-        throw new Error(data.message || "Error al publicar el material");
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Error al publicar");
       }
 
       alert(
-        "¡Material enviado! Estará visible una vez que el administrador lo apruebe.",
+        "¡Material enviado! Estará visible cuando el administrador lo apruebe.",
       );
       navigate("/Dashboard");
     } catch (error) {
@@ -80,24 +102,25 @@ const CreatePost = () => {
         </span>
       </div>
 
-      <div className="form-box shadow-sm p-4 rounded bg-white border border-top-0">
-        <div className="alert alert-info border-0 small">
-          Nota: Tu publicación no aparecerá en el catálogo general hasta que un
-          administrador verifique los datos.
+      <div className="form-box shadow-sm p-4 rounded bg-white border">
+        <div className="alert alert-info border-0 small py-2">
+          Publicarás como: <strong>{loggedUser?.nombre}</strong> <br />
+          Tu número de contacto: <strong>{loggedUser?.telefono}</strong>
         </div>
 
         <form onSubmit={handleSubmit}>
+          {/* ... resto del formulario igual ... */}
           <div className="mb-3">
             <label className="form-label fw-bold small text-uppercase">
-              Título del material
+              Título
             </label>
             <input
               className="form-control"
               id="title"
-              placeholder="Ej: 50 Ladrillos de arcilla"
               required
               value={formData.title}
               onChange={handleChange}
+              placeholder="Ej: Vigas de acero"
             />
           </div>
 
@@ -112,17 +135,9 @@ const CreatePost = () => {
               value={formData.type}
               onChange={handleChange}
             >
-              <option value="">Selecciona un tipo</option>
-              <optgroup label="Cemento">
-                <option>Cemento</option>
-                <option>Cemento Portland</option>
-                <option>Cemento Blanco</option>
-              </optgroup>
-              <optgroup label="Madera">
-                <option>Madera reciclada</option>
-                <option>Triplay</option>
-                <option>Tablones</option>
-              </optgroup>
+              <option value="">Selecciona...</option>
+              <option>Cemento</option>
+              <option>Madera</option>
               <option>Metal</option>
               <option>Ladrillo</option>
               <option>Vidrio</option>
@@ -131,28 +146,27 @@ const CreatePost = () => {
 
           <div className="mb-3">
             <label className="form-label fw-bold small text-uppercase">
-              Precio estimado (USD)
+              Precio (USD)
             </label>
             <input
               type="number"
               className="form-control"
               id="price"
-              placeholder="0.00"
               required
               value={formData.price}
               onChange={handleChange}
+              placeholder="0.00"
             />
           </div>
 
           <div className="mb-3">
             <label className="form-label fw-bold small text-uppercase">
-              Descripción detallada
+              Descripción
             </label>
             <textarea
               className="form-control"
               id="description"
               rows="3"
-              placeholder="Estado del material, dimensiones, cantidad exacta..."
               required
               value={formData.description}
               onChange={handleChange}
@@ -161,14 +175,14 @@ const CreatePost = () => {
 
           <div className="mb-4">
             <label className="form-label fw-bold small text-uppercase">
-              URL de la Imagen (Link)
+              URL Imagen
             </label>
             <input
               className="form-control"
               id="image"
-              placeholder="https://images.com/foto-material.jpg"
               value={formData.image}
               onChange={handleChange}
+              placeholder="https://..."
             />
           </div>
 
@@ -177,14 +191,7 @@ const CreatePost = () => {
             className="btn btn-success btn-lg w-100 fw-bold shadow-sm"
             disabled={loading}
           >
-            {loading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2"></span>
-                Procesando...
-              </>
-            ) : (
-              "Enviar para Revisión"
-            )}
+            {loading ? "Publicando..." : "Enviar para Revisión"}
           </button>
         </form>
       </div>

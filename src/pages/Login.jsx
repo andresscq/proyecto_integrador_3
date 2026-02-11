@@ -34,14 +34,17 @@ const Login = () => {
 
       // ✅ GUARDAR EN LOCALSTORAGE
       // Ahora incluimos 'phone' porque Postgres lo devuelve y lo usaremos para WhatsApp
+      // ✅ DENTRO DE TU handleSubmit EN Login.jsx
       localStorage.setItem(
         "loggedUser",
         JSON.stringify({
           token: data.token,
-          id: data.id, // En Postgres siempre será 'id' (numérico)
-          name: data.name,
+          id: data.id,
+          nombre: data.name,
           email: email,
-          phone: data.phone, // 👈 Importante para el catálogo
+          // data.phone es el nombre que viene de tu AuthController (Postgres)
+          // telefono es el nombre que espera CreatePost
+          telefono: data.phone,
           role: userRole,
         }),
       );

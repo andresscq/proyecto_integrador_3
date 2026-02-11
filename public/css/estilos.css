@@ -24,7 +24,9 @@ body {
   width: 100%;
   max-width: 400px;
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .container:hover {
@@ -50,7 +52,9 @@ form input {
   border-radius: 10px;
   border: 1px solid #ccc;
   font-size: 14px;
-  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  transition:
+    border-color 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 form input:focus {
@@ -69,7 +73,10 @@ form button {
   font-weight: bold;
   cursor: pointer;
   font-size: 16px;
-  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.3s ease;
   box-shadow: 0 4px 12px rgba(67, 160, 71, 0.3);
 }
 
@@ -104,4 +111,28 @@ p a:hover {
   font-size: 14px;
   min-height: 18px; /* evita que el contenido se mueva al mostrar error */
   text-align: center;
+}
+@media print {
+  /* Ocultamos todo lo que no sea el informe */
+  .no-print,
+  .navbar,
+  .btn,
+  footer {
+    display: none !important;
+  }
+
+  /* Forzamos a que el contenido del informe se vea */
+  .d-print-block {
+    display: block !important;
+  }
+
+  body {
+    background-color: white !important;
+    font-size: 12pt;
+  }
+}
+
+/* En la web ocultamos el informe */
+.d-print-block {
+  display: none;
 }

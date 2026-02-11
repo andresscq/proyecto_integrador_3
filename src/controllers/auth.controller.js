@@ -1,4 +1,4 @@
-import { query } from "../config/postgres.js"; // 👈 Ahora importamos Postgres
+import { query } from "../config/postgres.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -7,19 +7,23 @@ export const register = async (req, res) => {
     const { name, email, password, phone } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Guardamos en la tabla de Postgres
-    const result = await query(
-      "INSERT INTO users (name, email, password, phone) VALUES ($1, $2, $3, $4) RETURNING id, name, email",
-      [name, email, hashedPassword, phone],
-    );
+    // 🚀 CAMBIO: Llamamos al procedimiento almacenado que creaste en Postgres
+    // Pasamos los 4 parámetros que definimos en el SP
+    await query("CALL sp_registrar_usuario($1, $2, $3, $4)", [
+      name,
+      email,
+      hashedPassword,
+      phone,
+    ]);
 
+    // Como el SP no devuelve el registro, enviamos una confirmación limpia
     res.json({
-      message: "Usuario registrado en PostgreSQL",
-      user: result.rows[0],
+      message: "Usuario registrado con éxito mediante Procedimiento Almacenado",
+      user: { name, email },
     });
   } catch (error) {
     res.status(500).json({
-      message: "Error al registrar en Postgres",
+      message: "Error al registrar con el procedimiento en Postgres",
       error: error.message,
     });
   }
@@ -29,7 +33,7 @@ export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Buscamos en Postgres
+    // Buscamos en Postgres (El login se mantiene con SELECT para validar datos)
     const result = await query("SELECT * FROM users WHERE email = $1", [email]);
     const user = result.rows[0];
 
@@ -42,7 +46,6 @@ export const login = async (req, res) => {
       return res.status(401).json({ message: "Contraseña incorrecta" });
     }
 
-    // El ID ahora viene de Postgres (es un número)
     const token = jwt.sign({ id: user.id }, process.env.JWT_SECRET);
 
     res.json({
@@ -50,7 +53,7 @@ export const login = async (req, res) => {
       id: user.id,
       name: user.name,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone, // Este es el que ahora viaja correctamente al catálogo
     });
   } catch (error) {
     res
